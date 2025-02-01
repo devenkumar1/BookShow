@@ -13,7 +13,7 @@ router.post("/login",userLogin);
 router.post("/signup",userSignup);
 router.get("/logout",userLogout);
 router.post("/getuserdata",getUserData);
-router.post("/updateprofile",updateUserProfile);
+router.put("/updateprofile",updateUserProfile);
 router.get("/media/movies",getAllMovies);
 
 

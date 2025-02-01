@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema(
       enum: ["User", "Admin"],
       default: "User",
     },
+    profilePic:{
+      type:String,
+      default:'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+    },
     bookedTickets: {
       type: [
         {

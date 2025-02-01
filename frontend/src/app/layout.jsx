@@ -2,7 +2,7 @@
 "use client"; // This ensures the file is treated as a client component
 import { Provider } from "react-redux";
 import store from "@/store";
-
+import { Toaster } from "react-hot-toast";
 
 // Import your icons (if you are using react-icons)
 import "./globals.css"; // Include global styles if needed
@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className="dark">
       <body className="antialiased">
         <Provider store={store}>
-          {/* Navbar */}
+          <Toaster/>
           <Navbar />
 
           {children} 

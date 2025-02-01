@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUserData } from '@/store/userSlice';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 function LoginComponent() {
   const router = useRouter();
   const dispatch = useDispatch(); 
@@ -38,6 +39,7 @@ function LoginComponent() {
         router.push('/home');
       }
     } catch (error) {
+      toast.error(error);
       console.error("Login failed", error);
     }
   };

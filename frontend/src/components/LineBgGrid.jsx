@@ -3,6 +3,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { getUserData } from "@/store/userSlice";
+import Image from "next/image";
 
 export function LineBgGrid() {
   const { userData } = useSelector((state) => state.user);
@@ -26,6 +27,7 @@ export function LineBgGrid() {
         {userData && (
           <div className="flex flex-col justify-center p-10 w-4/5 md:w-1/2 bg-white bg-opacity-40 backdrop-blur-lg border border-gray-300 dark:border-gray-700 rounded-2xl shadow-2xl space-y-6">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+              <Image src={userData?.profilePic} height={150} width={150} className="rounded-lg mx-auto py-2" alt="profile-picture"/>
               Full Name: {(userData?.name)}
             </h3>
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">

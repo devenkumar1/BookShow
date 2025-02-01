@@ -42,7 +42,7 @@ useEffect(()=>{
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6">
       <h1 className="text-4xl font-bold text-center mb-4">
-        Welcome, {userData.name}!
+        Welcome, {userData?.name.toUpperCase()}!
       </h1>
       <p className="text-lg text-gray-600 text-center mb-6">
         Enjoy exploring our features and services.

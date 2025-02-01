@@ -11,6 +11,7 @@ import { BiMoviePlay } from "react-icons/bi";
 import { RiMovie2AiFill } from "react-icons/ri";
 import { IconBrandGithub, IconHome } from "@tabler/icons-react";
 import { getAllMovies } from "@/store/MovieSlice";
+import { toast } from "react-toastify";
 
 export function Navbar() {
   const router = useRouter();
@@ -26,7 +27,7 @@ export function Navbar() {
     if (movies.length === 0) {
       dispatch(getAllMovies());
     }
-    console.log(userData);
+    
 
     if (!userData) {
       dispatch(getUserData());
@@ -37,10 +38,11 @@ export function Navbar() {
 
   const logoutHandler = async () => {
     try {
-      dispatch(handleLogout()); // Dispatch logout action
-      router.push('/login'); // Redirect to login page after logout
+      dispatch(handleLogout()); 
+      router.push('/login');
     } catch (error) {
-      console.error("Logout failed", error); // Handle logout failure
+      toast.error(error);
+      console.error("Logout failed", error);
     }
   };
 
