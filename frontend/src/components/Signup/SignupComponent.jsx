@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { setUserData } from '@/store/userSlice';
 import { SpotlightCard } from './SpotlightCard';
@@ -35,7 +35,7 @@ function Signup() {
 
   useEffect(() => {
     if (userData) {
-      toast.success('Signup successful');
+     
       navigate.push('/home');
     }
   }, [userData, navigate, dispatch]);

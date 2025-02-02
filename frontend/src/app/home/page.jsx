@@ -41,6 +41,7 @@ useEffect(()=>{
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6">
+      {userData.role==="Admin" && <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition" onClick={() => navigate.push('/v1/admin')}>Admin Panel</button>}
       <h1 className="text-4xl font-bold text-center mb-4">
         Welcome, {userData?.name.toUpperCase()}!
       </h1>

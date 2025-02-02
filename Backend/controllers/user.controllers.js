@@ -11,16 +11,14 @@ export const userLogin = async (req, res) => {
   try {
     const olduser = await user.findOne({ email });
     if (!olduser) {
-      console.log("user does not exist");
       return res
         .status(500)
-        .json({ message: "something went wrong or  account doesn't exist" });
+        .json({ message: "Account doesn't exits or invalid credentials" });
     }
 
     const isPasswordMatch = await bcrypt.compare(password, olduser.password);
     if (!isPasswordMatch) {
-      console.log("password not matched");
-      return res.status(500).json({ message: "password doesn't match" });
+      return res.status(500).json({ message: "Invalid credentials" });
     }
     const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -37,10 +35,10 @@ export const userLogin = async (req, res) => {
         sameSite: "Lax",
       })
       .status(200)
-      .json({ message: "login succesful", userData, token });
+      .json({ message: "login succesful", userData });
   } catch (error) {
     console.log("error while user login", error);
-    res.status(500).json({ message: "something went wrong" });
+    res.status(500).json({ message: "Invalid credentials" });
   }
 };
 export const userSignup = async (req, res) => {
@@ -81,7 +79,7 @@ export const userSignup = async (req, res) => {
         sameSite: "Lax",
       })
       .status(201)
-      .json({ userData, token});
+      .json({ userData,message:"signup successful" });
   } catch (err) {
     console.log("error while user signup", err);
     res.status(500).json({ message: "something went wrong" });

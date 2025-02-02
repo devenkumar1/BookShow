@@ -1,22 +1,22 @@
-import user from "../models/user.model";
+import user from "../models/user.model.js";
 
 import jwt from 'jsonwebtoken'
-const checkAdmin= async(req,res,next)=>{
+export const checkAdmin= async(req,res,next)=>{
 try {
     //jwt token from user Browser
     const token = req.cookies.token;
     if (!token) {
       return res.status(401).json({ message: "No token provided" });
     }
-    JWT_SECRET=process.env.JWT_SECRET;
+    const JWT_SECRET=process.env.JWT_SECRET;
     const decoded = jwt.verify(token, JWT_SECRET);
-    const userData = await user.findById(decoded._id);
+    const userData = await user.findById(decoded.id);
     if (!userData) {
       return res.status(401).json({ message: "User not found" });
     }
 
-    if(userData.role!=="User"){
-        return res.send(403).json({message:"unauthorized access"});
+    if(userData.role==="User"){
+        return res.status(403).json({message:"unauthorized access"});
     } 
     req.userData = userData;
     next();

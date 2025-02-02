@@ -11,14 +11,14 @@ import { BiMoviePlay } from "react-icons/bi";
 import { RiMovie2AiFill } from "react-icons/ri";
 import { IconBrandGithub, IconHome } from "@tabler/icons-react";
 import { getAllMovies } from "@/store/MovieSlice";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 export function Navbar() {
   const router = useRouter();
   const dispatch = useDispatch();
   const [isClient, setIsClient] = useState(false); // Manage client-side rendering
 
-  const { userData,loading} = useSelector((state) => state.user);
+  const { userData, loading } = useSelector((state) => state.user);
   const { movies } = useSelector((state) => state.movies);
 
   // Ensure data fetching only on client-side
@@ -27,7 +27,7 @@ export function Navbar() {
     if (movies.length === 0) {
       dispatch(getAllMovies());
     }
-    
+
 
     if (!userData) {
       dispatch(getUserData());
@@ -38,7 +38,8 @@ export function Navbar() {
 
   const logoutHandler = async () => {
     try {
-      dispatch(handleLogout()); 
+      dispatch(handleLogout());
+      toast.success("Logout successful");
       router.push('/login');
     } catch (error) {
       toast.error(error);
@@ -59,7 +60,7 @@ export function Navbar() {
     },
   ];
 
-  if (!isClient) return null; // Prevent rendering on the server-side
+  if (!isClient) return null;
 
   return (
     <div className="w-full h-full top-40 md:h-20 flex items-center mt-15 mb-5 fixed md:top-10 z-50">
@@ -76,8 +77,9 @@ export function Navbar() {
         </div>
       ) : (
         isClient && userData && (
-          <div className="absolute right-10 top-5 text-white font-semibold">
+          <div className="absolute right-10 top-5 text-white font-semibold  text-xs cursor-pointer hover:scale-125">
             <IoEnterOutline onClick={logoutHandler} />
+            <span>Logout</span>
           </div>
         )
       )}

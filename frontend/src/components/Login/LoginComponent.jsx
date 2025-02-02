@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUserData } from '@/store/userSlice';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+
+import toast from 'react-hot-toast';
 function LoginComponent() {
   const router = useRouter();
   const dispatch = useDispatch(); 
@@ -34,13 +35,13 @@ function LoginComponent() {
     try {
       const response = await axios.post("http://localhost:4000/auth/login", formData, { withCredentials: true });
       const result= await response.data.userData;
+      toast.success('Login successful');
       dispatch(setUserData(result));
       if(userData){
         router.push('/home');
       }
     } catch (error) {
-      toast.error(error);
-      console.error("Login failed", error);
+     toast.error("Invalid credentials");
     }
   };
 
