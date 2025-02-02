@@ -33,25 +33,25 @@ export default function RootLayout({ children }) {
     }
     return (
         <div className="w-full flex flex-row">
-            <div className="w-[10%] min-h-screen flex flex-col pt-5 justify-around place-items-center text-center bg-blue-500 ">
-                <aside className="h-[100%] flex flex-col items-center justify-center ">
-                    <ul className="flex flex-col gap-10 text-2xl ">
-                        <li className="hover:bg-blue-900 cursor-pointer">
-                            <Link href={"/v1/admin"}>Admin dashboard</Link>
+            <div className="w-[250px] min-h-screen flex flex-col pt-5 bg-blue-500 shadow-lg">
+                <aside className="h-[100%] flex flex-col items-center justify-start space-y-10 px-4 py-5">
+                    <div className="text-white text-2xl font-bold mb-8">Admin Panel</div>
+                    <ul className="flex flex-col gap-6 w-full">
+                        <li className="w-full hover:bg-blue-700 transition duration-300 rounded-md">
+                            <Link href={"/v1/admin"} className="block text-white py-3 px-6">Admin Dashboard</Link>
                         </li>
-                        <li className="hover:bg-blue-900 cursor-pointer">
-                            <Link href={"/v1/admin/component/movie"}>Movie dashboard</Link>
+                        <li className="w-full hover:bg-blue-700 transition duration-300 rounded-md">
+                            <Link href={"/v1/admin/component/movie"} className="block text-white py-3 px-6">Movie Dashboard</Link>
                         </li>
-                        <li className="hover:bg-blue-900 cursor-pointer">
-                            <Link href={"/v1/admin/component/shows"}>Show dashboard</Link>
+                        <li className="w-full hover:bg-blue-700 transition duration-300 rounded-md">
+                            <Link href={"/v1/admin/component/shows"} className="block text-white py-3 px-6">Show Dashboard</Link>
                         </li>
                     </ul>
                 </aside>
             </div>
-            <main className="w-full min-h-screen">
-             {children}
+            <main className="w-full min-h-screen bg-gray-100 ">
+                {children}
             </main>
-
         </div>
     );
 }

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { userLogin,userLogout,userSignup,getUserData, updateUserProfile, getAllMovies } from "../controllers/user.controllers.js";
+import { userLogin,userLogout,userSignup,getUserData, updateUserProfile, getAllMovies, getOneMovie } from "../controllers/user.controllers.js";
 
 const router=Router();
 
@@ -15,6 +15,6 @@ router.get("/logout",userLogout);
 router.post("/getuserdata",getUserData);
 router.put("/updateprofile",updateUserProfile);
 router.get("/media/movies",getAllMovies);
-
+router.get('/movie/:id',getOneMovie);
 
 export default router;

@@ -78,7 +78,7 @@ export function Navbar() {
       ) : (
         isClient && userData && (
           <div className="absolute right-10 top-5 text-white font-semibold  text-xs cursor-pointer hover:scale-125">
-            <IoEnterOutline onClick={logoutHandler} />
+            <IoEnterOutline onClick={logoutHandler} className=" bg-red-600 text-4xl rounded-lg" />
             <span>Logout</span>
           </div>
         )

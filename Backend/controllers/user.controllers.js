@@ -156,3 +156,15 @@ export const getAllMovies=async(req,res)=>{
   const movies= await movie.find();
   return res.status(200).json({movies});
 }
+
+export const getOneMovie=async(req,res)=>{
+  try {
+    const {id}=req.params;
+  const Movie= await movie.findById(id);
+  return res.status(200).json({Movie});
+  } catch (error) {
+    console.log(error) 
+    return res.status(500).json({message:"something went wrong"})
+  }
+
+}

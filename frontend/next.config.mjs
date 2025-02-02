@@ -33,6 +33,13 @@ const nextConfig = {
         hostname: 'cdn-icons-png.flaticon.com', 
         pathname: '/**', // Matches all paths under the domain
       },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com', 
+        pathname: '/**', // Matches all paths under the domain
+      },
+
+
     ],
   },
 };
