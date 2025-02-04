@@ -5,12 +5,12 @@ export default function HomeLayout({ children }) {
   return (
     <div className="min-h-screen  antialiased">
       <div className="flex flex-col md:flex-row">
-        <div className="w-full md:w-1/5 bg-gray-800  ">
+        <div className="w-full md:w-1/5 bg-blue-500 ">
           <SideBar />
         </div>
 
         {/* Main content area */}
-        <div className="w-full md:6/5 border">
+        <div className="w-full md:4/5 border">
           
     
           <main>{children}</main>

@@ -6,12 +6,12 @@ function SideBar() {
   const router = useRouter();
 
   return (
-    <div className='min-h-screen bg-blue-500 pt-12'>
-        <aside className="flex justify-center">
-          <ul className='flex flex-col gap-7 items-center'>
+    <div className="pt-12 ">
+        <aside className="flex justify-center min-h-screen">
+          <ul className="flex flex-col gap-7 items-center">
             <li></li>
             <li></li>
-            <li className='w-full'>
+            <li className="w-full">
               <Link 
                 href="/home"
                 className={`block text-center py-2 text-white 
@@ -21,7 +21,7 @@ function SideBar() {
                 Home
               </Link>
             </li>
-            <li className='w-full'>
+            <li className="w-full">
               <Link 
                 href="/media/movies"
                 className={`block text-center py-2 text-white 
@@ -31,7 +31,7 @@ function SideBar() {
                 Movies
               </Link>
             </li>
-            <li className='w-full'>
+            <li className="w-full">
               <Link 
                 href="/media/shows"
                 className={`block text-center py-2 text-white 
@@ -41,7 +41,7 @@ function SideBar() {
                 Shows
               </Link>
             </li>
-            <li className='w-full'>
+            <li className="w-full">
               <Link 
                 href="/user/tickets"
                 className={`block text-center py-2 text-white 
@@ -51,7 +51,7 @@ function SideBar() {
                 Booked Tickets
               </Link>
             </li>
-            <li className='w-full'>
+            <li className="w-full">
               <Link 
                 href="/user/profile"
                 className={`block text-center py-2 text-white 
@@ -67,4 +67,4 @@ function SideBar() {
   )
 }
 
-export default SideBar
+export default SideBar;

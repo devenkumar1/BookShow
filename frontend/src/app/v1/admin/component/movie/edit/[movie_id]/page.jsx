@@ -8,7 +8,8 @@ import { useDispatch } from 'react-redux';
 import { getAllMovies } from '@/store/MovieSlice';
 
 const EditMovie = ({ params }) => {
-  const { movie_id } = React.use(params);  // Ensure the param is unwrapped before use
+  //
+const { movie_id } = React.use(params);
 const navigate=useRouter();
 const dispatch=useDispatch();
   const [movie, setMovie] = useState({
@@ -33,7 +34,7 @@ const dispatch=useDispatch();
       dispatch(getAllMovies());
       const oneMovie = await response.data.Movie;
       setMovie(oneMovie);
-      setLoading(false);  // Data fetched, stop loading
+      setLoading(false);  
     } catch (error) {
       toast.error('Error fetching movie data');
       console.log(error);

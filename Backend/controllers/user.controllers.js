@@ -3,6 +3,7 @@ import ticket from "../models/ticket.model.js";
 import movie from "../models/movie.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import City from "../models/city.model.js";
 export const userLogin = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -167,4 +168,17 @@ export const getOneMovie=async(req,res)=>{
     return res.status(500).json({message:"something went wrong"})
   }
 
+}
+
+export const addCity=async(req,res)=>{
+const {id,name,state}=req.body;
+try {
+  const addedCity= await City.create({
+    id,name,state
+  })
+  return res.status(201).json({message:"added city succesfully",addedCity});
+} catch (error) {
+  console.log("something went wrong in add city");
+  return res.status(500).json({message:"city not added"});
+}
 }
