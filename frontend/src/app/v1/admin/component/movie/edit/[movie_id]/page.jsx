@@ -8,7 +8,6 @@ import { useDispatch } from 'react-redux';
 import { getAllMovies } from '@/store/MovieSlice';
 
 const EditMovie = ({ params }) => {
-  //
 const { movie_id } = React.use(params);
 const navigate=useRouter();
 const dispatch=useDispatch();

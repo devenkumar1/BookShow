@@ -46,6 +46,9 @@ export default function RootLayout({ children }) {
                         <li className="w-full hover:bg-blue-700 transition duration-300 rounded-md">
                             <Link href={"/v1/admin/component/shows"} className="block text-white py-3 px-6">Show Dashboard</Link>
                         </li>
+                        <li className="w-full hover:bg-blue-700 transition duration-300 rounded-md">
+                            <Link href={"/v1/admin/component/theatre"} className="block text-white py-3 px-6">Theatre Dashboard</Link>
+                        </li>
                     </ul>
                 </aside>
             </div>

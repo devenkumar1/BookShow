@@ -1,12 +1,12 @@
 import theatre from "../models/theatre.model.js";
 
 export const addTheatre=async(req,res)=>{
-    const{name,location,totalSeats,contact}=req.body;
-    if(!name || !location || !totalSeats || !contact){
+    const{name,location,totalSeats,contact,state,city}=req.body;
+    if(!name || !location || !totalSeats || !contact ||!state||!city){
         return res.status(400).json({message:"all fields are mandatory"});
     }
     try {
-        const newTheatre=await theatre.create({name,location,totalSeats,contact});
+        const newTheatre=await theatre.create({name,location,totalSeats,contact,state,city});
         return res.status(201).json({message:"theatre added successfully"});
     } catch (error) {
         console.log("something went wrong in adding theatre",error);
@@ -36,6 +36,18 @@ export const deleteTheatre=async(req,res)=>{
     } catch (error) {
         console.log("something went wrong in deleting theatre",error);
         return res.status(500).json({message:"deleting theatre unsuccessful"});
+    }
+
+}
+
+export const getAllTheatre=async(req,res)=>{
+    try {
+        const theatres=await theatre.find();
+        return res.status(200).json({theatres});
+
+    } catch (error) {
+        console.log("something went wrong in get all theatre",error);
+        return res.status(500).json({message:"something went wrong"});
     }
 
 }

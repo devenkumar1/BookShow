@@ -170,15 +170,35 @@ export const getOneMovie=async(req,res)=>{
 
 }
 
-export const addCity=async(req,res)=>{
-const {id,name,state}=req.body;
-try {
-  const addedCity= await City.create({
-    id,name,state
-  })
-  return res.status(201).json({message:"added city succesfully",addedCity});
+// export const addCity=async(req,res)=>{
+// const {id,name,state}=req.body;
+// try {
+//   const addedCity= await City.create({
+//     id,name,state
+//   })
+//   return res.status(201).json({message:"added city succesfully",addedCity});
+// } catch (error) {
+//   console.log("something went wrong in add city");
+//   return res.status(500).json({message:"city not added"});
+// }
+// }
+
+
+export const getCityByState=async(req,res)=>{
+  const {state}=req.params;
+  try {
+    // Filter by the state field
+    const cities = await City.find({ state });  
+    if (!cities || cities.length === 0) {
+        return res.status(404).json({message:"no city found",cities:[]});
+    }
+  // Returning the cities 
+  return res.status(200).json({message:"cities found",cities});
 } catch (error) {
-  console.log("something went wrong in add city");
-  return res.status(500).json({message:"city not added"});
+    console.error('Error fetching cities:', error);
+    res.status(500).json({message:"something went wrong"});
+    throw error;
 }
+
+
 }
