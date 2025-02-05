@@ -4,6 +4,7 @@ import movie from "../models/movie.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import City from "../models/city.model.js";
+import theatre from '../models/theatre.model.js'
 export const userLogin = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -170,18 +171,19 @@ export const getOneMovie=async(req,res)=>{
 
 }
 
-// export const addCity=async(req,res)=>{
-// const {id,name,state}=req.body;
-// try {
-//   const addedCity= await City.create({
-//     id,name,state
-//   })
-//   return res.status(201).json({message:"added city succesfully",addedCity});
-// } catch (error) {
-//   console.log("something went wrong in add city");
-//   return res.status(500).json({message:"city not added"});
-// }
-// }
+export const getTheatresInCity=async(req,res)=>{
+
+const{city}=req.params;
+
+try {
+  const theatres=await theatre.find({city:city});
+  return res.status(200).json({message:"theatres found in the city",theatres});
+} catch (error) {
+  return  res.status(500).json({message:"something went wrong in fetching theatres"});
+}
+  
+}
+
 
 
 export const getCityByState=async(req,res)=>{
@@ -202,3 +204,19 @@ export const getCityByState=async(req,res)=>{
 
 
 }
+
+
+
+
+// export const addCity=async(req,res)=>{
+// const {id,name,state}=req.body;
+// try {
+//   const addedCity= await City.create({
+//     id,name,state
+//   })
+//   return res.status(201).json({message:"added city succesfully",addedCity});
+// } catch (error) {
+//   console.log("something went wrong in add city");
+//   return res.status(500).json({message:"city not added"});
+// }
+// }

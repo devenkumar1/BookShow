@@ -24,12 +24,12 @@ function AddTheatre() {
     state: "",
     city: ""
   });
-  const navigate = useRouter();
+const navigate=useRouter();
   // API call to fetch cities based on selected state
   const handleStateChange = async (e) => {
     const state = e.target.value;
     setSelectedState(state);
-    setFormData({ ...formData, state, city: "" });
+    setFormData({ ...formData, state, city: "" }); 
 
     if (state) {
       try {
@@ -54,19 +54,19 @@ function AddTheatre() {
     }
   };
 
-  const handleAddMovie = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:4000/auth/admin/theatre/add', formData, { withCredentials: true });
-
+const handleAddMovie=async(e)=>{
+  e.preventDefault();
+  try {
+    const response=await axios.post('http://localhost:4000/auth/admin/theatre/add',formData,{withCredentials:true});
+   
       toast.success("Theatre added successfully");
-     
-      navigate.push('/v1/admin/component/theatre');
+      
+      navigate.push('/v1/admin/component/theatre'); 
     } catch (error) {
       toast.error('theatre not added');
-      console.log("theatre not added", error);
-    }
+    console.log("theatre not added",error);
   }
+}
   return (
     <div className='bg-gray-800 text-white p-8 rounded-lg'>
       <h1 className='text-4xl mb-6 text-center'>Add Theatre</h1>
@@ -150,8 +150,8 @@ function AddTheatre() {
             className='bg-gray-700 text-white p-2 w-full rounded'>
             <option value="">Select a City</option>
             {cities.map((city) => (
-              <option key={city._id} value={city._id}>
-                {city.name}
+              <option key={city._id} value={city.name}>
+                {city.name} 
               </option>
             ))}
           </select>

@@ -18,15 +18,12 @@ const showSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  totalSeats: {
-    type: Number,
-    default: 100,
-  },
   price: {
     type: Number,
     required: true,
   },
   status: {
+    required: true,
     type: String,
     enum: ["upcoming", "ongoing", "completed"],
   },

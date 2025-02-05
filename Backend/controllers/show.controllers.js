@@ -1,11 +1,12 @@
 import show from "../models/show.model.js";
 
 export const addShow = async (req, res) => {
-  const {movieId,theatreId,timeSlot,availableSeats,price}=req.body;
-  if(!movieId||!theatreId||!timeSlot||!availableSeats||!price){
+  const {movieId,theatreId,timeSlot,availableSeats,price,status}=req.body;
+  if(!movieId||!theatreId||!timeSlot||!availableSeats||!price ||!status){
     return res.status(400).json({message:"all fields are mandatory"});
   }
- try{ const newShow= await show.create({movieId,theatreId,timeSlot,availableSeats,price});
+ try{ 
+  const newShow= await show.create({movieId,theatreId,timeSlot,availableSeats,price,status});
   return res.status(201).json({message:"show added successfully"});
   }catch(error){
     console.log("something went wrong in adding show",error);
@@ -16,7 +17,7 @@ export const addShow = async (req, res) => {
 
 export const updateShow=async(req,res)=>{
   const {id}=req.params;
-  const {movieId,theatreId,timeSlot,availableSeats,price}=req.body;
+  const {movieId,theatreId,timeSlot,availableSeats,price,status}=req.body;
   try{
     const selectedShow= await show.findByIdAndUpdate(id,{movieId,theatreId,timeSlot,availableSeats,price},{new:true});
     return res.status(200).json({message:"show updated successfully"});
@@ -38,4 +39,15 @@ export const deleteShow=async(req,res)=>{
     return res.status(500).json({message:"deleting show unsuccessful"});
   }
 
+}
+
+
+export const getAllShowsAvailable=async(req,res)=>{
+  try {
+    const shows=await show.find();
+    res.status(200).json({message:"fetched all shows",shows})
+  } catch (error) {
+console.log("something went wrong in fetching shows",error);
+res.status(500).json({message:"fetching shows unsuccessful"});  
+  }
 }
