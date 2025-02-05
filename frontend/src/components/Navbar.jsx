@@ -63,11 +63,11 @@ export function Navbar() {
   if (!isClient) return null;
 
   return (
-    <div className="w-full h-full top-40 md:h-20 flex items-center mt-15 mb-5 fixed md:top-10 z-50">
+    <div className="w-full h-full top-10 md:h-20 flex items-center  md:mt-15 mb-5 fixed md:top-5 z-50">
       <FloatingDock items={links} />
 
       {isClient && !userData ? (
-        <div className="absolute right-10 top-5 space-x-4">
+        <div className="absolute md:right-10 md:top-5 right-2 top-0 space-x-2 md:space-x-4">
           <Link href="/signup" className="text-white px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700">
             Sign Up
           </Link>
@@ -78,7 +78,7 @@ export function Navbar() {
       ) : (
         isClient && userData && (
           <div className="absolute right-10 top-5 text-white font-semibold  text-xs cursor-pointer hover:scale-125">
-            <IoEnterOutline onClick={logoutHandler} className=" bg-red-600 text-4xl rounded-lg" />
+            <IoEnterOutline onClick={logoutHandler} className=" bg-red-400 text-4xl rounded-lg" />
             <span>Logout</span>
           </div>
         )

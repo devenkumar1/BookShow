@@ -4,7 +4,9 @@ import movie from "../models/movie.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import City from "../models/city.model.js";
-import theatre from '../models/theatre.model.js'
+import theatre from "../models/theatre.model.js";
+import show from "../models/show.model.js";
+
 export const userLogin = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -81,7 +83,7 @@ export const userSignup = async (req, res) => {
         sameSite: "Lax",
       })
       .status(201)
-      .json({ userData,message:"signup successful" });
+      .json({ userData, message: "signup successful" });
   } catch (err) {
     console.log("error while user signup", err);
     res.status(500).json({ message: "something went wrong" });
@@ -147,92 +149,119 @@ export const updateUserProfile = async (req, res) => {
     }
     const userData = await user.findById(decodedToken.id).select("-password");
     console.log("updated user successfully");
-    return res.status(200).json({ currentUser, userData});
+    return res.status(200).json({ currentUser, userData });
   } catch (error) {
     console.log("Error occurred in updating user profile", error);
     res.status(500).json({ message: "Something went wrong" });
   }
 };
 //get all movies
-export const getAllMovies=async(req,res)=>{
-  const movies= await movie.find();
-  return res.status(200).json({movies});
-}
+export const getAllMovies = async (req, res) => {
+  const movies = await movie.find();
+  return res.status(200).json({ movies });
+};
 
-export const getOneMovie=async(req,res)=>{
+export const getOneMovie = async (req, res) => {
   try {
-    const {id}=req.params;
-  const Movie= await movie.findById(id);
-  return res.status(200).json({Movie});
+    const { id } = req.params;
+    const Movie = await movie.findById(id);
+    return res.status(200).json({ Movie });
   } catch (error) {
-    console.log(error) 
-    return res.status(500).json({message:"something went wrong"})
+    console.log(error);
+    return res.status(500).json({ message: "something went wrong" });
   }
+};
 
-}
+export const getTheatresInCity = async (req, res) => {
+  const { city } = req.params;
 
-export const getTheatresInCity=async(req,res)=>{
+  try {
+    const theatres = await theatre.find({ city: city });
+    return res
+      .status(200)
+      .json({ message: "theatres found in the city", theatres });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "something went wrong in fetching theatres" });
+  }
+};
 
-const{city}=req.params;
-
-try {
-  const theatres=await theatre.find({city:city});
-  return res.status(200).json({message:"theatres found in the city",theatres});
-} catch (error) {
-  return  res.status(500).json({message:"something went wrong in fetching theatres"});
-}
-  
-}
-
-
-
-export const getCityByState=async(req,res)=>{
-  const {state}=req.params;
+export const getCityByState = async (req, res) => {
+  const { state } = req.params;
   try {
     // Filter by the state field
-    const cities = await City.find({ state });  
+    const cities = await City.find({ state });
     if (!cities || cities.length === 0) {
-        return res.status(404).json({message:"no city found",cities:[]});
+      return res.status(404).json({ message: "no city found", cities: [] });
     }
-  // Returning the cities 
-  return res.status(200).json({message:"cities found",cities});
-} catch (error) {
-    console.error('Error fetching cities:', error);
-    res.status(500).json({message:"something went wrong"});
+    // Returning the cities
+    return res.status(200).json({ message: "cities found", cities });
+  } catch (error) {
+    console.error("Error fetching cities:", error);
+    res.status(500).json({ message: "something went wrong" });
     throw error;
-}
+  }
+};
 
 
-}
 
-import Show from '../models/Show';  // Assuming you have a Show model
-import mongoose from 'mongoose';
 
-export const getShowByMovieandTheatre = async (req, res) => {
-  const { theatreId, movieId, selectedDate } = req.params;
+export const getMoviesForTheatre = async (req, res) => {
+  const { theatreId } = req.params;
 
   try {
-    // Parse the selected date to ensure it's in the correct format (e.g., YYYY-MM-DD)
-    const startOfDay = new Date(selectedDate);
-    const endOfDay = new Date(selectedDate);
-    endOfDay.setHours(23, 59, 59, 999); // Set the end of the day to include all shows on that day
-
-    // Query to find shows based on movieId, theatreId, and the selected date
-    const shows = await Show.find({
-      theatreId: mongoose.Types.ObjectId(theatreId),
-      movieId: mongoose.Types.ObjectId(movieId),
-      timeSlot: { $gte: startOfDay, $lte: endOfDay },
-      status: 'upcoming',  // Filter for upcoming shows
-    }).populate('movieId theatreId');  // Populate movie and theatre details if needed
-
-    if (!shows || shows.length === 0) {
-      return res.status(404).json({ message: 'No shows found for this movie and theatre on the selected date' });
+    // Find the theatre by ID and get the movie references
+    const Theatre = await theatre.findById(theatreId)
+    .populate({
+      path: 'shows', 
+      populate: {
+        path: 'movieId', // Populate the movieId field in each show
+        model: 'movie',
+      },
+    });
+    if (!Theatre) {
+      return res.status(404).json({ message: "Theatre not found" });
     }
 
-    // Respond with the shows found
-    res.status(200).json({ shows });
+    // Collect movie IDs from the shows associated with the theatre
+    const movieIds = Theatre.shows.map((show) => show.movieId);
+
+    // Fetch all the movies using the movieIds
+    const movies = await movie.find({ _id: { $in: movieIds } });
+
+    res.json({ movies });
   } catch (error) {
-    console.error("Error fetching shows:", error);
-    res.status(500).json({ message: 'Server error while fetching shows', error });
+    console.error("Error fetching movies for theatre:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+// Fetch Shows for a selected movie, theatre, and date
+export const getShowsForMovie = async (req, res) => {
+  const { theatreId, movieId, date } = req.params;
+
+  try {
+    const showDate = new Date(date);
+
+    const startOfDay = new Date(showDate.setHours(0, 0, 0, 0));
+
+    const endOfDay = new Date(showDate.setHours(23, 59, 59, 999));
+
+    // Find the shows based on the selected theatreId, movieId, and show date
+    const shows = await show.find({
+      theatreId,
+      movieId,
+      timeSlot: {
+        $gte: startOfDay+1,  
+        $lte: endOfDay+1,    
+      },
+    }).populate('movieId theatreId');
+
+    res.json({ shows });
+  } catch (error) {
+    console.error('Error fetching shows:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
