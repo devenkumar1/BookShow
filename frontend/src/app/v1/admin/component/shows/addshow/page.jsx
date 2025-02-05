@@ -88,7 +88,6 @@ function AddShowPanel() {
             }
         }
     };
-
     return (
         <div className="flex justify-center items-center bg-gray-100 min-h-screen p-4 text-black">
             <div className="bg-white rounded-lg p-8 shadow-lg w-full max-w-lg mt-28">

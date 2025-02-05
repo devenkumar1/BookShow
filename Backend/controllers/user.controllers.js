@@ -205,18 +205,34 @@ export const getCityByState=async(req,res)=>{
 
 }
 
+import Show from '../models/Show';  // Assuming you have a Show model
+import mongoose from 'mongoose';
 
+export const getShowByMovieandTheatre = async (req, res) => {
+  const { theatreId, movieId, selectedDate } = req.params;
 
+  try {
+    // Parse the selected date to ensure it's in the correct format (e.g., YYYY-MM-DD)
+    const startOfDay = new Date(selectedDate);
+    const endOfDay = new Date(selectedDate);
+    endOfDay.setHours(23, 59, 59, 999); // Set the end of the day to include all shows on that day
 
-// export const addCity=async(req,res)=>{
-// const {id,name,state}=req.body;
-// try {
-//   const addedCity= await City.create({
-//     id,name,state
-//   })
-//   return res.status(201).json({message:"added city succesfully",addedCity});
-// } catch (error) {
-//   console.log("something went wrong in add city");
-//   return res.status(500).json({message:"city not added"});
-// }
-// }
+    // Query to find shows based on movieId, theatreId, and the selected date
+    const shows = await Show.find({
+      theatreId: mongoose.Types.ObjectId(theatreId),
+      movieId: mongoose.Types.ObjectId(movieId),
+      timeSlot: { $gte: startOfDay, $lte: endOfDay },
+      status: 'upcoming',  // Filter for upcoming shows
+    }).populate('movieId theatreId');  // Populate movie and theatre details if needed
+
+    if (!shows || shows.length === 0) {
+      return res.status(404).json({ message: 'No shows found for this movie and theatre on the selected date' });
+    }
+
+    // Respond with the shows found
+    res.status(200).json({ shows });
+  } catch (error) {
+    console.error("Error fetching shows:", error);
+    res.status(500).json({ message: 'Server error while fetching shows', error });
+  }
+};
