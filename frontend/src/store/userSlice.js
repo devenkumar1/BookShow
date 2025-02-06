@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
+import toast from "react-hot-toast";
+const backend_url = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
 // Async thunk to get user data
 export const getUserData = createAsyncThunk(
   "user/getUserData",
   async (_,{ rejectWithValue }) => {
     try {
-        const response = await axios.post("http://localhost:4000/auth/getuserdata",{},{withCredentials: true });
+        const response = await axios.post(`${backend_url}/auth/getuserdata`,{},{withCredentials: true });
         console.log(response.data);
         const data = await response.data.userData;
         return data;
@@ -22,11 +23,14 @@ export const handleLogout = createAsyncThunk(
   'user/logout',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://localhost:4000/auth/logout", { withCredentials: true });
+      const response = await axios.get(`${backend_url}/auth/logout`, { withCredentials: true });
+      toast.success("Logout successful");
       console.log("Logout successful");
       return response.data;
     } catch (error) {
+      toast.error("logout failed")
       return rejectWithValue(error.message || "Failed to logout");
+
     }
   }
 );

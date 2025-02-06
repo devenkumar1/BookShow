@@ -7,8 +7,9 @@ import Link from 'next/link';
 import { setUserData } from '@/store/userSlice';
 import { SpotlightCard } from './SpotlightCard';
 import axios from 'axios';
-
+import Image from 'next/image';
 function Signup() {
+  const backend_url = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
   const dispatch = useDispatch();
   const navigate = useRouter();
   const { userData, loading, error } = useSelector((state) => state.user);
@@ -35,7 +36,7 @@ function Signup() {
 
   useEffect(() => {
     if (userData) {
-     
+
       navigate.push('/home');
     }
   }, [userData, navigate, dispatch]);
@@ -67,7 +68,7 @@ function Signup() {
       try {
         const response = await axios.post("http://localhost:4000/auth/signup", formData, { withCredentials: true });
         const result = await response.data.userData;
-         dispatch(setUserData(result));
+        dispatch(setUserData(result));
         if (result) {
           toast.success('Signup successful');
           navigate.push('/home');
@@ -79,7 +80,7 @@ function Signup() {
   };
 
   const handleOAuth = (provider) => {
-    window.location.href = `http://localhost:4000/auth/${provider}`;
+    window.location.href = `${backend_url}/auth/${provider}`;
   };
 
   return (
@@ -136,18 +137,22 @@ function Signup() {
               </button>
             </form>
             <div className="mt-4">
-              <button
-                onClick={() => handleOAuth('google')}
-                className="w-full py-2 bg-red-500 text-white rounded-md mt-2"
-              >
-                Sign Up with Google
-              </button>
-            
+
+
             </div>
 
             <br />
             <span>Already have an account?</span>
             <Link href="/login" className="text-blue-600">Login</Link>
+            <p className='text-center'>or</p>
+            <button
+              onClick={() => handleOAuth('google')}
+              className="w-full py-2 bg-red-500 text-white rounded-md mt-2 flex items-center justify-center gap-2"
+            >
+              Sign Up with Google
+              <Image src="https://cdn-icons-png.flaticon.com/512/2702/2702602.png" alt="Google Logo" width={20} height={20} className="mr-2"></Image>
+
+            </button>
           </div>
           <SpotlightCard />
         </div>

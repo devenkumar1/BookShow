@@ -6,15 +6,17 @@ import { setUserData } from '@/store/userSlice';
 import axios from 'axios';
 
 import toast from 'react-hot-toast';
+import Image from 'next/image';
 function LoginComponent() {
   const router = useRouter();
-  const dispatch = useDispatch(); 
-  const { userData,loading} = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const { userData, loading } = useSelector((state) => state.user);
+  const backend_url = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
   useEffect(() => {
     if (userData) {
-      router.push('/home');  
+      router.push('/home');
     }
-  }, [userData, router,dispatch]);
+  }, [userData, router, dispatch]);
 
 
   const [formData, setFormData] = useState({
@@ -30,21 +32,21 @@ function LoginComponent() {
     }));
   }
   const handleOAuth = (provider) => {
-    window.location.href = `http://localhost:4000/auth/${provider}`;
+    window.location.href = `${backend_url}/auth/${provider}`;
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:4000/auth/login", formData, { withCredentials: true });
-      const result= await response.data.userData;
+      const response = await axios.post(`${backend_url}/auth/login`, formData, { withCredentials: true });
+      const result = await response.data.userData;
       toast.success('Login successful');
       dispatch(setUserData(result));
-      if(userData){
+      if (userData) {
         router.push('/home');
       }
     } catch (error) {
-     toast.error("Invalid credentials");
+      toast.error("Invalid credentials");
     }
   };
 
@@ -95,13 +97,16 @@ function LoginComponent() {
           </a>
         </p>
         <div className="mt-4">
-              <button
-                onClick={() => handleOAuth('google')}
-                className="w-full py-2 bg-red-500 text-white rounded-md mt-2"
-              >
-                Sign Up with Google
-              </button>
-            </div>
+          <p className='text-center'>or</p>
+          <button
+            onClick={() => handleOAuth('google')}
+            className="w-full py-2 bg-red-500 text-white rounded-md mt-2 flex justify-center items-center gap-2"
+          >
+            Sign Up with Google
+            <Image src="https://cdn-icons-png.flaticon.com/512/2702/2702602.png" alt="Google Logo" width={20} height={20} className="mr-2"></Image>
+
+          </button>
+        </div>
       </div>
     </div>
   );
