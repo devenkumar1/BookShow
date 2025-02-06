@@ -29,6 +29,9 @@ function LoginComponent() {
       [name]: value,
     }));
   }
+  const handleOAuth = (provider) => {
+    window.location.href = `http://localhost:4000/auth/${provider}`;
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -91,6 +94,14 @@ function LoginComponent() {
             Sign up
           </a>
         </p>
+        <div className="mt-4">
+              <button
+                onClick={() => handleOAuth('google')}
+                className="w-full py-2 bg-red-500 text-white rounded-md mt-2"
+              >
+                Sign Up with Google
+              </button>
+            </div>
       </div>
     </div>
   );

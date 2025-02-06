@@ -78,6 +78,10 @@ function Signup() {
     }
   };
 
+  const handleOAuth = (provider) => {
+    window.location.href = `http://localhost:4000/auth/${provider}`;
+  };
+
   return (
     <div className="w-full min-h-screen">
       <div className="flex flex-col mt-30">
@@ -131,6 +135,16 @@ function Signup() {
                 {loading ? 'Signing up...' : 'Sign Up'}
               </button>
             </form>
+            <div className="mt-4">
+              <button
+                onClick={() => handleOAuth('google')}
+                className="w-full py-2 bg-red-500 text-white rounded-md mt-2"
+              >
+                Sign Up with Google
+              </button>
+            
+            </div>
+
             <br />
             <span>Already have an account?</span>
             <Link href="/login" className="text-blue-600">Login</Link>
