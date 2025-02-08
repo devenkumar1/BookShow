@@ -7,6 +7,7 @@ import connectDb from './config/db.js';
 import './config/passport.config.js'; 
 import userRoutes from './routes/user.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import paymentRoutes from './routes/payment.routes.js';
 import cors from 'cors';
 
 dotenv.config();
@@ -36,6 +37,7 @@ app.get("/", (req, res) => {
 
 app.use("/auth", userRoutes);
 app.use("/auth/admin", adminRoutes);
+app.use("/api",paymentRoutes);
 
 app.listen(PORT, () => {
     connectDb();

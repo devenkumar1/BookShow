@@ -1,208 +1,170 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import toast from 'react-hot-toast';
-import { stateArray } from '@/utils/State';
-import { getUserData } from '@/store/userSlice';
-import { useDispatch, useSelector } from 'react-redux';
+"use client";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { stateArray } from "@/utils/State";
+import { getUserData } from "@/store/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { initiatePayment } from "@/utils/loadRazorpay";
 
 function ShowsPage() {
   const dispatch = useDispatch();
   const { userData } = useSelector((state) => state.user);
 
-  const [states, setStates] = useState(stateArray); // Your states array
+  const [states] = useState(stateArray);
   const [cities, setCities] = useState([]);
   const [theatres, setTheatres] = useState([]);
-  const [movies, setMovies] = useState([]); // List of available movies
-  const [shows, setShows] = useState([]); // List of available shows for selected movie and theatre
-  const [selectedState, setSelectedState] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
-  const [selectedTheatre, setSelectedTheatre] = useState('');
-  const [selectedMovie, setSelectedMovie] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedShow, setSelectedShow] = useState(null); // For selected show details
-  const [quantity, setQuantity] = useState(1); // Ticket quantity
-  const [totalPrice, setTotalPrice] = useState(0); // Calculated total price
+  const [movies, setMovies] = useState([]);
+  const [shows, setShows] = useState([]);
 
-  // Fetch cities based on state
-  const handleStateChange = async (e) => {
-    const newState = e.target.value;
-    setSelectedState(newState);
-    try {
-      if (newState) {
-        const response = await axios.get(`http://localhost:4000/auth/state/${newState}`);
-        setCities(response.data.cities);
-      }
-    } catch (error) {
-      console.error('Error fetching cities:', error);
-      toast.error('Failed to fetch cities');
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedTheatre, setSelectedTheatre] = useState("");
+  const [selectedMovie, setSelectedMovie] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedShow, setSelectedShow] = useState(null);
+
+  const [quantity, setQuantity] = useState(1);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
+
+  useEffect(() => {
+    if (!selectedState) {
+      setCities([]);
+      return;
     }
-  };
+    axios
+      .get(`${backendUrl}/auth/state/${selectedState}`)
+      .then(({ data }) => setCities(data.cities))
+      .catch(() => toast.error("Failed to fetch cities"));
+  }, [selectedState]);
 
-  // Fetch theatres based on city
-  const handleCityChange = async (e) => {
-    const newCity = e.target.value;
-    setSelectedCity(newCity);
-    try {
-      if (newCity) {
-        const response = await axios.get(`http://localhost:4000/auth/city/theatre/${newCity}`);
-        setTheatres(response.data.theatres);
-      }
-    } catch (error) {
-      console.error('Error fetching theatres:', error);
-      toast.error('Failed to fetch theatres');
+  useEffect(() => {
+    if (!selectedCity) {
+      setTheatres([]);
+      return;
     }
-  };
+    axios
+      .get(`${backendUrl}/auth/city/theatre/${selectedCity}`)
+      .then(({ data }) => setTheatres(data.theatres))
+      .catch(() => toast.error("Failed to fetch theatres"));
+  }, [selectedCity]);
 
-  // Fetch available movies for the selected theatre (updated to use Show model)
-  const handleTheatreChange = async (e) => {
-    const newTheatre = e.target.value;
-    setSelectedTheatre(newTheatre);
-    try {
-      if (newTheatre) {
-        // Fetch movies from show model
-        const response = await axios.get(`http://localhost:4000/auth/getMoviesForTheatre/${newTheatre}`);
-        setMovies(response.data.movies); 
-      }
-    } catch (error) {
-      console.error('Error fetching movies for the selected theatre:', error);
-      toast.error('Failed to fetch movies');
+  useEffect(() => {
+    if (!selectedTheatre) {
+      setMovies([]);
+      return;
     }
-  };
+    axios
+      .get(`${backendUrl}/auth/getMoviesForTheatre/${selectedTheatre}`)
+      .then(({ data }) => setMovies(data.movies))
+      .catch(() => toast.error("Failed to fetch movies"));
+  }, [selectedTheatre]);
 
-  // Fetch shows for the selected movie, theatre, and date
-  const handleMovieChange = async (e) => {
-    const newMovie = e.target.value;
-    setSelectedMovie(newMovie);
-    try {
-      if (newMovie && selectedTheatre && selectedDate) {
-        const response = await axios.get(`http://localhost:4000/auth/shows/${selectedTheatre}/${newMovie}/${selectedDate}`);
-        setShows(response.data.shows);
-      }
-    } catch (error) {
-      console.error('Error fetching shows:', error);
-      toast.error('Failed to fetch shows');
+  useEffect(() => {
+    if (!selectedMovie || !selectedTheatre || !selectedDate) {
+      setShows([]);
+      return;
     }
-  };
+    axios
+      .get(`${backendUrl}/auth/shows/${selectedTheatre}/${selectedMovie}/${selectedDate}`)
+      .then(({ data }) => setShows(data.shows))
+      .catch(() => toast.error("Failed to fetch shows"));
+  }, [selectedMovie, selectedTheatre, selectedDate]);
 
-  // Date change handler
-  const handleDateChange = (e) => {
-    const newDate = e.target.value;
-    setSelectedDate(newDate);
-    // Fetch shows after the date is selected
-    if (selectedMovie && selectedTheatre && newDate) {
-      handleMovieChange({ target: { value: selectedMovie } });
-    }
-  };
-
-  // Show selection handler
-  const handleShowSelection = (e) => {
-    const selectedShow = shows.find(show => show._id === e.target.value);
-    setSelectedShow(selectedShow);
-    setTotalPrice(selectedShow.price * quantity); // Calculate total price based on quantity
-  };
-
-  // Quantity change handler
-  const handleQuantityChange = (e) => {
-    const newQuantity = e.target.value;
-    setQuantity(newQuantity);
-    if (selectedShow) {
-      setTotalPrice(selectedShow.price * newQuantity);
-    }
-  };
-
-  // Booking handler
   const handleBooking = async () => {
     if (!selectedShow || !quantity) {
       toast.error('Please select a show and ticket quantity');
       return;
     }
-
+  
+    const total = selectedShow.price * Number(quantity);
+    setTotalPrice(total);
+    setLoading(true);
+  
     try {
-      const response = await axios.post('/api/book-ticket', {
-        showId: selectedShow._id,
-        userId: userData._id,
-        quantity,
-        totalPrice,
-      });
-
-      toast.success('Booking successful!');
-      // Display the ticket confirmation details or navigate to a confirmation page
+      const paymentResponse = await initiatePayment(
+        total,
+        userData.email,
+        userData._id,
+        selectedShow._id,
+        Number(quantity),
+        total
+      );
+  
+      if (paymentResponse.success) {
+        toast.success('Booking successful!');
+      } else {
+        toast.error('Payment failed. Booking not completed.');
+      }
     } catch (error) {
-      console.error('Error booking ticket:', error);
-      toast.error('Failed to book ticket');
+      console.error(error);
+      toast.error('Payment failed or cancelled. Booking not completed.');
+    } finally {
+      setLoading(false);
     }
   };
+  
+
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 text-white flex flex-col justify-center py-12">
       <h1 className="text-4xl font-extrabold text-center text-white mb-8">Choose a Show</h1>
-      <div className="w-[90%] max-w-lg mx-auto bg-white rounded-xl shadow-lg p-6">
+
+      <div className="w-[90%] max-w-lg mx-auto bg-white rounded-xl shadow-lg p-6 text-gray-800">
         <form className="flex flex-col gap-6">
-          {/* State Select */}
-          <label htmlFor="state" className="md:text-lg font-semibold text-gray-700">
+          <label className="font-semibold">
             State:
-            <select name="state" id="state" onChange={handleStateChange} className="mt-2 p-3 rounded-lg border border-gray-300 w-[80%] md:w-[90%]">
+            <select className="block w-full mt-2 p-3 border rounded-lg" onChange={(e) => setSelectedState(e.target.value)}>
               <option value="">Select a State</option>
-              {states.map(state => (
-                <option key={state} value={state}>
-                  {state}
-                </option>
+              {states.map((state) => (
+                <option key={state} value={state}>{state}</option>
               ))}
             </select>
           </label>
 
-          {/* City Select */}
-          <label htmlFor="city" className="md:text-lg font-semibold text-gray-700">
-             City:
-            <select name="city" id="city" onChange={handleCityChange} className="mt-2 p-3 rounded-lg border border-gray-300 w-[80%] md:w-[90%]">
+          <label className="font-semibold">
+            City:
+            <select className="block w-full mt-2 p-3 border rounded-lg" onChange={(e) => setSelectedCity(e.target.value)}>
               <option value="">Select a City</option>
-              {cities.map(city => (
-                <option key={city._id} value={city.name}>
-                  {city.name}
-                </option>
+              {cities.map((city) => (
+                <option key={city._id} value={city.name}>{city.name}</option>
               ))}
             </select>
           </label>
 
-          {/* Theatre Select */}
-          <label htmlFor="theatre" className="text-lg font-semibold text-gray-700">
+          <label className="font-semibold">
             Theatre:
-            <select name="theatre" id="theatre" onChange={handleTheatreChange} className="mt-2 p-3 rounded-lg border border-gray-300 w-[80%] md:w-[90%]">
+            <select className="block w-full mt-2 p-3 border rounded-lg" onChange={(e) => setSelectedTheatre(e.target.value)}>
               <option value="">Select a Theatre</option>
-              {theatres.map(theatre => (
-                <option key={theatre._id} value={theatre._id}>
-                  {theatre.name}
-                </option>
+              {theatres.map((theatre) => (
+                <option key={theatre._id} value={theatre._id}>{theatre.name}</option>
               ))}
             </select>
           </label>
 
-          {/* Movie Select */}
-          <label htmlFor="movie" className="text-lg font-semibold text-gray-700">
+          <label className="font-semibold">
             Movie:
-            <select name="movie" id="movie" onChange={handleMovieChange} className="mt-2 p-3 rounded-lg border border-gray-300 w-[80%] md:w-[90%]">
+            <select className="block w-full mt-2 p-3 border rounded-lg" onChange={(e) => setSelectedMovie(e.target.value)}>
               <option value="">Select a Movie</option>
-              {movies.map(movie => (
-                <option key={movie._id} value={movie._id}>
-                  {movie.title}
-                </option>
+              {movies.map((movie) => (
+                <option key={movie._id} value={movie._id}>{movie.title}</option>
               ))}
             </select>
           </label>
 
-          {/* Date Select */}
-          <label htmlFor="showDate" className="text-lg font-semibold text-gray-700 ">
+          <label className="font-semibold">
             Show Date:
-            <input type="date" id="showDate" onChange={handleDateChange} className="mt-2 p-3 rounded-lg border w-[80%] md:w-[90%] border-gray-300" />
+            <input type="date" className="block w-full mt-2 p-3 border rounded-lg" onChange={(e) => setSelectedDate(e.target.value)} />
           </label>
 
-          {/* Show Select */}
-          <label htmlFor="show" className="text-lg font-semibold text-gray-700">
+          <label className="font-semibold">
             Show:
-            <select name="show" id="show" onChange={handleShowSelection} className="mt-2 p-3 rounded-lg border border-gray-300 w-[80%] md:w-[90%]">
+            <select className="block w-full mt-2 p-3 border rounded-lg" onChange={(e) => setSelectedShow(shows.find((show) => show._id === e.target.value))}>
               <option value="">Select a Show</option>
-              {shows.map(show => (
+              {shows.map((show) => (
                 <option key={show._id} value={show._id}>
                   {new Date(show.timeSlot).toLocaleString()} - {show.availableSeats} seats left - ₹{show.price}
                 </option>
@@ -210,31 +172,13 @@ function ShowsPage() {
             </select>
           </label>
 
-          {/* Quantity Input */}
-          <label htmlFor="quantity" className="text-lg font-semibold text-gray-700">
+          <label className="font-semibold">
             Ticket Quantity:
-            <input
-              type="number"
-              id="quantity"
-              value={quantity}
-              onChange={handleQuantityChange}
-              min="1"
-              className="mt-2 p-3 rounded-lg border border-gray-300 w-[80%] md:w-[90%]"
-            />
+            <input type="number" className="block w-full mt-2 p-3 border rounded-lg" min="1" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
           </label>
 
-          {/* Total Price */}
-          <div className="text-lg font-semibold text-gray-700 w-[80%] md:w-[90%]">
-            Total Price: ₹{totalPrice}
-          </div>
-
-          {/* Booking Button */}
-          <button
-            type="button"
-            onClick={handleBooking}
-            className="mt-6 py-3 bg-gradient-to-r from-indigo-600 to-pink-600 text-white rounded-lg font-bold shadow-md hover:shadow-xl transition duration-300"
-          >
-            Book Ticket
+          <button onClick={handleBooking} disabled={loading} className="py-3 bg-indigo-600 text-white rounded-lg font-bold mt-4">
+            {loading ? "Booking..." : "Book Ticket"}
           </button>
         </form>
       </div>
@@ -242,4 +186,4 @@ function ShowsPage() {
   );
 }
 
-export default ShowsPage;
+export default ShowsPage

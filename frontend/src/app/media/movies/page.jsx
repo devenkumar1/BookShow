@@ -51,8 +51,7 @@ function MoviesPage() {
             <div className="mt-2 flex justify-between items-center">
               <span className="text-yellow-500 font-semibold">{movie.rating}</span>
             </div>
-          </div>
-              <button className='bg-blue-500 rounded-md text-sm py-4 '>book ticket</button>
+          </div> 
         </div>
       ))}
     </div>

@@ -39,7 +39,6 @@ router.post("/getuserdata", getUserData);
 router.put("/updateprofile", updateUserProfile);
 router.get("/media/movies", getAllMovies);
 router.get("/movie/:id", getOneMovie);
-// router.post('/addcity',addCity);
 router.get("/state/:state", getCityByState);
 
 // Get theatres by city name

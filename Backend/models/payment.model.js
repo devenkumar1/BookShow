@@ -1,34 +1,34 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const paymentSchema = new mongoose.Schema({
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
-    required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
   },
   amount: {
-    type: Number,
-    required: true,
+      type: Number,
+      required: true,
   },
   status: {
-    type: String,
-    enum: ["success", "failed", "pending"],
-    required: true,
+      type: String,
+      enum: ['pending', 'success', 'failed'],
+      default: 'pending',
   },
   method: {
-    type: String,
-    enum: ["card", "upi", "wallet", "net banking"],
+      type: String,
+      required: true,
+  },
+  razorpayOrderId: {
+      type: String,
+      required: true,
   },
   transactionId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
+      type: String,
+      default: 'pending', // Remove unique constraint if it exists
   },
 });
 
-const payment = mongoose.model("payment", paymentSchema);
-export default payment;
+
+const Payment = mongoose.model('Payment', paymentSchema);
+export default Payment;

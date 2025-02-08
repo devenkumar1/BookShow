@@ -1,4 +1,4 @@
-import user from "../models/user.model.js";
+import User from "../models/user.model.js";
 import ticket from "../models/ticket.model.js";
 import movie from "../models/movie.model.js";
 import jwt from "jsonwebtoken";
@@ -13,7 +13,7 @@ export const userLogin = async (req, res) => {
     return res.status(400).json({ message: "all fields are mandatory" });
   }
   try {
-    const olduser = await user.findOne({ email });
+    const olduser = await User.findOne({ email });
     if (!olduser) {
       return res
         .status(500)
@@ -29,7 +29,7 @@ export const userLogin = async (req, res) => {
     const token = jwt.sign({ id: olduser._id }, JWT_SECRET, {
       expiresIn: "1d",
     });
-    const userData = await user.findOne({ email }).select("-password");
+    const userData = await User.findOne({ email }).select("-password");
 
     return res
       .cookie("token", token, {
@@ -51,7 +51,7 @@ export const userSignup = async (req, res) => {
     return res.status(400).json({ message: "all fields are mandatory" });
   }
   try {
-    let useralreadyExists = await user.findOne({ email });
+    let useralreadyExists = await User.findOne({ email });
     if (useralreadyExists) {
       return res.status(400).json({ message: "account already exists" });
     }
@@ -61,7 +61,7 @@ export const userSignup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     //creating new user
-    const newUser = await user.create({
+    const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
@@ -73,7 +73,7 @@ export const userSignup = async (req, res) => {
     const token = jwt.sign({ id: newUser._id }, JWT_SECRET, {
       expiresIn: "1d",
     });
-    const userData = await user.findOne({ email }).select("-password");
+    const userData = await User.findOne({ email }).select("-password");
 
     return res
       .cookie("token", token, {
@@ -122,7 +122,7 @@ export const getUserData = async (req, res) => {
       return res.status(401).json({ message: "unauthorized access" });
     }
     const decoded = jwt.verify(providedToken, JWT_SECRET);
-    const userData = await user.findById(decoded.id).select("-password");
+    const userData = await User.findById(decoded.id).select("-password");
     return res.status(200).json({ userData });
   } catch (error) {
     res.status(500).json({ message: "something went wrong" });
@@ -147,7 +147,7 @@ export const updateUserProfile = async (req, res) => {
     if (!currentUser) {
       return res.status(404).json({ message: "User not found" });
     }
-    const userData = await user.findById(decodedToken.id).select("-password");
+    const userData = await User.findById(decodedToken.id).select("-password");
     console.log("updated user successfully");
     return res.status(200).json({ currentUser, userData });
   } catch (error) {
